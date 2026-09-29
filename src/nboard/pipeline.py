@@ -30,6 +30,7 @@ def run_pipeline(pool, daily, level, start, end, min_sample=3, basis='close',
 
 
 def fetch_start(start, level, buffer_days=None):
+    # 固定 buffer，让不同 level 共用同一份缓存（跑完首板，二/三板可秒出）
     if buffer_days is None:
-        buffer_days = 15 + level * 3
+        buffer_days = 40
     return (pd.Timestamp(start) - pd.Timedelta(days=buffer_days)).strftime('%Y-%m-%d')
