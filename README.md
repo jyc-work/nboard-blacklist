@@ -1,5 +1,9 @@
 # nboard-blacklist
 
+![CI](https://github.com/jyc-work/nboard-blacklist/actions/workflows/ci.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+
 统计 A 股**第 N 个连续涨停板**（首板 / 二板 / 三板 …）在**次日**的表现，生成"黑名单"。
 
 > 只做研究统计，**不构成任何投资建议**。
