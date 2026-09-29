@@ -1,0 +1,11 @@
+pandas>=1.0
+numpy>=1.18
+# 开源数据源（默认）
+akshare>=1.10
+# 可选：聚宽数据 SDK（本地）或平台内置 jqdata
+# jqdatasdk
+# 可选后端
+# tushare
+# baostock
+# 测试
+pytest
