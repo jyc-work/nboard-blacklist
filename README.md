@@ -50,10 +50,16 @@ pip install -r requirements.txt
 
 ```bash
 # 先用少量股票试跑
-python scripts/run_akshare.py --level 1 --max-stocks 50
+python scripts/run_open.py --source akshare --level 1 --max-stocks 50
 
 # 全市场（较慢，建议开缓存后重跑）
-python scripts/run_akshare.py --level 2 --start 2019-01-01 --end 2026-09-24
+python scripts/run_open.py --source akshare --level 2 --start 2019-01-01 --end 2026-09-24
+```
+
+AKShare 一直报代理/连接错误时，换 **Baostock**（不走 HTTP 代理）：
+
+```bash
+python scripts/run_open.py --source baostock --level 1 --max-stocks 50
 ```
 
 产物：`output/全量统计_2板_*.csv`、`output/黑名单_2板_*.csv`。
@@ -72,12 +78,23 @@ src/nboard/
   pipeline.py    # 数据源 -> 统计 -> CSV
   sources/
     akshare_source.py    # 开源默认
-    joinquant_source.py  # 聚宽
+    baostock_source.py   # 开源备选（不走 HTTP 代理）
+    joinquant_source.py  # 聚宽（精确涨停价）
 scripts/
-  run_akshare.py
-  run_joinquant.py
+  run_open.py          # 开源数据命令行
+  run_joinquant.py     # 聚宽研究环境入口
 tests/test_core.py
 ```
+
+## 常见问题
+
+**所有股票都报 `ProxyError` / `ConnectionError`？**
+
+系统开启了代理，但代理连不上或不放行东方财富。AKShare 会读取系统代理环境变量，本工具**默认自动绕开系统代理**；若仍失败：
+
+- 显式指定可用代理：`--proxy http://127.0.0.1:7890`
+- 保留系统代理：`--keep-proxy`
+- 或改用聚宽数据：在研究环境跑 `scripts/run_joinquant.py`
 
 ## 局限
 
