@@ -56,11 +56,7 @@ python scripts/run_open.py --source akshare --level 1 --max-stocks 50
 python scripts/run_open.py --source akshare --level 2 --start 2019-01-01 --end 2026-09-24
 ```
 
-AKShare 一直报代理/连接错误时，换 **Baostock**（不走 HTTP 代理）：
-
-```bash
-python scripts/run_open.py --source baostock --level 1 --max-stocks 50
-```
+> AKShare 默认走东财，部分网络会被拦；已内置 **新浪/腾讯/东财** 多通道回退，也可手动指定 `--method sina|tx|em`。
 
 产物：`output/全量统计_2板_*.csv`、`output/黑名单_2板_*.csv`。
 
@@ -90,11 +86,11 @@ tests/test_core.py
 
 **所有股票都报 `ProxyError` / `ConnectionError`？**
 
-系统开启了代理，但代理连不上或不放行东方财富。AKShare 会读取系统代理环境变量，本工具**默认自动绕开系统代理**；若仍失败：
+AKShare 默认走东方财富接口，部分网络/安全软件会**定向重置东财的 kline 请求**（表现为 `RemoteDisconnected`）。本工具已做**多通道回退**：新浪 -> 腾讯 -> 东财，正常无需干预。如仍失败：
 
-- 显式指定可用代理：`--proxy http://127.0.0.1:7890`
-- 保留系统代理：`--keep-proxy`
-- 或改用聚宽数据：在研究环境跑 `scripts/run_joinquant.py`
+- 指定通道：`--method sina`（新浪）或 `--method tx`（腾讯）
+- 系统代理问题（ProxyError）：默认已自动绕开；需要代理用 `--proxy http://127.0.0.1:7890`
+- 换后端：`--source baostock`，或研究环境跑 `scripts/run_joinquant.py`
 
 ## 局限
 

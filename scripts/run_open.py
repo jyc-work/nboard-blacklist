@@ -47,6 +47,8 @@ def main():
     ap.add_argument('--at-least', action='store_true', help='至少 N 板（默认恰好第 N 板）')
     ap.add_argument('--max-stocks', type=int, default=None, help='只跑前 N 只（调试用）')
     ap.add_argument('--adjust', default='', help="AKShare 复权：''=不复权（默认）/ qfq / hfq")
+    ap.add_argument('--method', default='auto', choices=['auto', 'sina', 'tx', 'em'],
+                    help='AKShare 取数通道：auto/sina(新浪)/tx(腾讯)/em(东财)')
     ap.add_argument('--cache-dir', default='./cache')
     ap.add_argument('--out-dir', default='./output')
     ap.add_argument('--sleep', type=float, default=0.2, help='AKShare 每只间隔秒数，防风控')
@@ -67,7 +69,8 @@ def main():
         print('股票池：%d 只，取数 %s ~ %s，level=%d'
               % (len(pool), fetch_start, args.end, args.level))
         daily = src.get_daily(list(pool), fetch_start, args.end,
-                              adjust=args.adjust, cache_dir=args.cache_dir, sleep=args.sleep)
+                              adjust=args.adjust, cache_dir=args.cache_dir, sleep=args.sleep,
+                              method=args.method)
     else:
         from nboard.sources import baostock_source as src
         pool = src.get_pool(args.end, max_stocks=args.max_stocks)
@@ -78,9 +81,9 @@ def main():
 
     if daily is None:
         print('\n未取到数据。排查建议：')
-        print('  1) 默认已尝试绕开代理；仍失败可 --proxy http://127.0.0.1:7890')
-        print('  2) 换后端：--source baostock（不走 HTTP 代理）')
-        print('  3) 或改用聚宽：研究环境跑 scripts/run_joinquant.py')
+        print('  1) 东财(kline)接口被拦时，换通道：--method sina 或 --method tx')
+        print('  2) 默认已尝试绕开代理；仍失败可 --proxy http://127.0.0.1:7890')
+        print('  3) 换后端：--source baostock，或研究环境跑 scripts/run_joinquant.py')
         return
     all_path, black_path = pipeline.run_pipeline(
         pool, daily, args.level, args.start, args.end,
